@@ -12,3 +12,10 @@ __pycache__/
 .ipynb_checkpoints/
 runs/
 eval_out/
+
+# Local agent/support files and screenshots are not part of the lab submission.
+/.ai/
+/.graphifyignore
+/AGENTS.md
+/graphify-out/
+/Screenshot*.png
