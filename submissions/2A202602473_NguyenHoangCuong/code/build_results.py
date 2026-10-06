@@ -377,8 +377,15 @@ Chưa có số liệu để chọn cấu hình tốt nhất, so sánh baseline, 
         (row for row in inference_rows if row.get("macro_f1_val") is not None),
         key=lambda row: row["macro_f1_val"], default=None,
     )
+    selected_inference_id = best_inference.get("exp_id") if best_inference else None
     runtime = next(
-        (row for row in inference_rows if row.get("batch", 1) == 1 and row.get("latency_p95_ms") is not None),
+        (
+            row for row in inference_rows
+            if selected_inference_id is not None
+            and row.get("exp_id") == selected_inference_id
+            and row.get("batch", 1) == 1
+            and row.get("latency_p95_ms") is not None
+        ),
         None,
     )
     split_summary = next(
@@ -459,7 +466,7 @@ Chưa có số liệu để chọn cấu hình tốt nhất, so sánh baseline, 
         f"Validation inference tốt nhất trong các phương pháp đã ghi là {best_inference.get('method')}."
         if best_inference else "Chưa có phép đo inference."
     ), (
-        f"Latency batch-1 p95: {runtime.get('latency_p95_ms')} ms trên {runtime.get('GPU')}."
+        f"Latency batch-1 p95 for {runtime.get('exp_id')} ({runtime.get('method')}): {runtime.get('latency_p95_ms')} ms on {runtime.get('GPU')}."
         if runtime else "Chưa có latency batch-1."
     ), "Đo latency cần warmup ít nhất 10 lần, synchronize GPU và ít nhất 50 lần đo; notebook lưu rõ GPU/dtype/batch/resolution và việc tính preprocessing.", "",
         "## Chung kết và per-class", "",

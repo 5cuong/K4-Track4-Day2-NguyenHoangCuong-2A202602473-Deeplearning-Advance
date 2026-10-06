@@ -173,6 +173,7 @@ def train_one_epoch(model, loader, criterion, optimizer, scheduler, scaler, cfg:
     _set_train_mode(model, frozen=cfg.init == "frozen")
     total_loss = 0.0
     seen = 0
+    skipped_optimizer_steps = 0
     started = time.perf_counter()
     for images, target, _filenames in loader:
         images = images.to(device, non_blocking=True)
@@ -195,11 +196,16 @@ def train_one_epoch(model, loader, criterion, optimizer, scheduler, scaler, cfg:
         if cfg.grad_clip_norm is not None and cfg.grad_clip_norm > 0:
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip_norm)
+        scale_before = scaler.get_scale()
         scaler.step(optimizer)
         scaler.update()
-        scheduler.step()
-        if ema is not None:
-            ema.update(model)
+        optimizer_step_skipped = scaler.get_scale() < scale_before
+        if optimizer_step_skipped:
+            skipped_optimizer_steps += 1
+        else:
+            scheduler.step()
+            if ema is not None:
+                ema.update(model)
         batch_size = int(target.shape[0])
         total_loss += float(loss.detach().item()) * batch_size
         seen += batch_size
@@ -208,6 +214,7 @@ def train_one_epoch(model, loader, criterion, optimizer, scheduler, scaler, cfg:
         "train_loss": total_loss / max(1, seen),
         "lr_backbone": float(optimizer.param_groups[0]["lr"]),
         "epoch_seconds": time.perf_counter() - started,
+        "skipped_optimizer_steps": skipped_optimizer_steps,
     }
 
 

@@ -1,0 +1,63 @@
+{
+  "B01": {
+    "axis": "backbone",
+    "difference": "baseline recipe; resnet50"
+  },
+  "B02": {
+    "axis": "backbone",
+    "difference": "baseline recipe; resnext50_32x4d"
+  },
+  "B03": {
+    "axis": "backbone",
+    "difference": "baseline recipe; convnext_tiny"
+  },
+  "B04": {
+    "axis": "backbone",
+    "difference": "baseline recipe; deit_small_patch16_224"
+  },
+  "B05": {
+    "axis": "backbone",
+    "difference": "baseline recipe; mobilenetv3_large_100"
+  },
+  "T00": {
+    "axis": "baseline",
+    "difference": "baseline recipe"
+  },
+  "T01": {
+    "axis": "A: initialization",
+    "difference": "init=frozen"
+  },
+  "T02": {
+    "axis": "A: initialization",
+    "difference": "init=scratch, pretrained=False"
+  },
+  "T03": {
+    "axis": "B: augmentation",
+    "difference": "aug=color"
+  },
+  "T04": {
+    "axis": "B: augmentation",
+    "difference": "aug=randaug"
+  },
+  "T05": {
+    "axis": "B: augmentation",
+    "difference": "mix=cutmix, mix_alpha=1.0"
+  },
+  "T06": {
+    "axis": "C: loss",
+    "difference": "loss=ls, label_smoothing=0.1"
+  },
+  "T07": {
+    "axis": "C: loss",
+    "difference": "loss=focal, focal_gamma=2.0"
+  },
+  "T08": {
+    "axis": "D: sample balance",
+    "difference": "sampler=balanced"
+  },
+  "T09": {
+    "axis": "A+B+C combination",
+    "difference": "best A=T00, B=T05, C=T00 by validation",
+    "notes": "Combined validation-selected factors; confirm interactions with final seeds."
+  }
+}

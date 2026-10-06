@@ -10,6 +10,7 @@ images/
 checkpoints/
 __pycache__/
 .ipynb_checkpoints/
+.venv/
 runs/
 eval_out/
 
